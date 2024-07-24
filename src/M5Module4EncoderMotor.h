@@ -44,7 +44,7 @@ class M5Module4EncoderMotor {
     I2C_Class _i2c;
 
    public:
-    bool begin(TwoWire *wire = &Wire, uint8_t addr = MODULE_4ENCODERMOTOR_ADDR,
+    bool begin(TwoWire *wire = &Wire, uint8_t addr = _addr,
                uint8_t sda = 21, uint8_t scl = 22, long freq = 100000);
     void setMode(uint8_t index, uint8_t mode);
     int32_t getEncoderValue(uint8_t index);

@@ -25,7 +25,7 @@ uint8_t M5Module4EncoderMotor::checkIndex(uint8_t index) {
  */
 void M5Module4EncoderMotor::setMode(uint8_t index, uint8_t mode) {
     index = checkIndex(index);
-    _i2c.writeByte(MODULE_4ENCODERMOTOR_ADDR,
+    _i2c.writeByte(_addr,
                    MODULE_4ENCODERMOTOR_CONFIG_ADDR + (0x10 * index), mode);
 }
 
@@ -40,7 +40,7 @@ int32_t M5Module4EncoderMotor::getEncoderValue(uint8_t index) {
 
     index = checkIndex(index);
     addr  = MODULE_4ENCODERMOTOR_ENCODER_ADDR + 4 * index;
-    _i2c.readBytes(MODULE_4ENCODERMOTOR_ADDR, addr, read_buf, 4);
+    _i2c.readBytes(_addr, addr, read_buf, 4);
     return (read_buf[0] << 24) | (read_buf[1] << 16) | (read_buf[2] << 8) |
            read_buf[3];
 }
@@ -62,7 +62,7 @@ void M5Module4EncoderMotor::setEncoderValue(uint8_t index, int32_t encoder) {
     write_buf[2] = encoder >> 8;
     write_buf[3] = encoder & 0xff;
 
-    _i2c.writeBytes(MODULE_4ENCODERMOTOR_ADDR, addr, write_buf, 4);
+    _i2c.writeBytes(_addr, addr, write_buf, 4);
 }
 
 /**
@@ -76,7 +76,7 @@ void M5Module4EncoderMotor::setMotorSpeed(uint8_t index, int8_t duty) {
     index = checkIndex(index);
     addr  = MODULE_4ENCODERMOTOR_PWM_DUTY_ADDR + index;
 
-    _i2c.writeByte(MODULE_4ENCODERMOTOR_ADDR, addr, duty);
+    _i2c.writeByte(_addr, addr, duty);
 }
 
 /**
@@ -90,7 +90,7 @@ int8_t M5Module4EncoderMotor::getMotorSpeed(uint8_t index) {
     index = checkIndex(index);
     addr  = MODULE_4ENCODERMOTOR_PWM_DUTY_ADDR + index;
 
-    _i2c.readBytes(MODULE_4ENCODERMOTOR_ADDR, addr, &read_data, 1);
+    _i2c.readBytes(_addr, addr, &read_data, 1);
     return read_data;
 }
 
@@ -105,7 +105,7 @@ int8_t M5Module4EncoderMotor::getMotorSpeed20MS(uint8_t index) {
     index = checkIndex(index);
     addr  = MODULE_4ENCODERMOTOR_SPEED_ADDR + index;
 
-    _i2c.readBytes(MODULE_4ENCODERMOTOR_ADDR, addr, &read_data, 1);
+    _i2c.readBytes(_addr, addr, &read_data, 1);
     return read_data;
 }
 
@@ -120,7 +120,7 @@ void M5Module4EncoderMotor::setPositionPID(uint8_t index, uint8_t kp,
     write_buf[1] = ki;
     write_buf[2] = kd;
 
-    _i2c.writeBytes(MODULE_4ENCODERMOTOR_ADDR, addr, write_buf, 3);
+    _i2c.writeBytes(_addr, addr, write_buf, 3);
 }
 
 /**
@@ -144,7 +144,7 @@ void M5Module4EncoderMotor::setPositionPoint(uint8_t index,
 
     // Serial.printf(" %x %x %x %x \r\n", write_buf[0], write_buf[1],
     // write_buf[2], write_buf[3]);
-    _i2c.writeBytes(MODULE_4ENCODERMOTOR_ADDR, addr, write_buf, 4);
+    _i2c.writeBytes(_addr, addr, write_buf, 4);
 }
 
 /**
@@ -159,7 +159,7 @@ void M5Module4EncoderMotor::setPostionPIDMaxSpeed(uint8_t index,
     index = checkIndex(index);
     addr  = MODULE_4ENCODERMOTOR_CONFIG_ADDR + index * 0x10 + 0x08;
 
-    _i2c.writeByte(MODULE_4ENCODERMOTOR_ADDR, addr, max_pwm);
+    _i2c.writeByte(_addr, addr, max_pwm);
 }
 
 void M5Module4EncoderMotor::setSpeedPID(uint8_t index, uint8_t kp, uint8_t ki,
@@ -173,7 +173,7 @@ void M5Module4EncoderMotor::setSpeedPID(uint8_t index, uint8_t kp, uint8_t ki,
     write_buf[1] = ki;
     write_buf[2] = kd;
 
-    _i2c.writeBytes(MODULE_4ENCODERMOTOR_ADDR, addr, write_buf, 3);
+    _i2c.writeBytes(_addr, addr, write_buf, 3);
 }
 
 /**
@@ -188,7 +188,7 @@ void M5Module4EncoderMotor::setSpeedPoint(uint8_t index, int8_t speed_point) {
     index = checkIndex(index);
     addr  = MODULE_4ENCODERMOTOR_CONFIG_ADDR + index * 0x10 + 0x0c;
 
-    _i2c.writeByte(MODULE_4ENCODERMOTOR_ADDR, addr, (uint8_t)speed_point);
+    _i2c.writeByte(_addr, addr, (uint8_t)speed_point);
 }
 
 /**
@@ -201,7 +201,7 @@ bool M5Module4EncoderMotor::getFirmwareVersion(uint8_t *fw) {
     uint8_t addr;
     addr = MODULE_4ENCODERMOTOR_FIRMWARE_VERSION_ADDR;
 
-    if (_i2c.readBytes(MODULE_4ENCODERMOTOR_ADDR, addr, &read_data, 1)) {
+    if (_i2c.readBytes(_addr, addr, &read_data, 1)) {
         *fw = read_data;
         return true;
     } else {
@@ -214,7 +214,7 @@ bool M5Module4EncoderMotor::getBootloaderVersion(uint8_t *fw) {
     uint8_t addr;
     addr = MODULE_4ENCODERMOTOR_BOOTLOADER_VERSION_ADDR;
 
-    if (_i2c.readBytes(MODULE_4ENCODERMOTOR_ADDR, addr, &read_data, 1)) {
+    if (_i2c.readBytes(_addr, addr, &read_data, 1)) {
         *fw = read_data;
         return true;
     } else {
@@ -235,7 +235,7 @@ void M5Module4EncoderMotor::setI2CAddress(uint8_t addr) {
 
     reg       = MODULE_4ENCODERMOTOR_I2C_ADDRESS_ADDR;
     write_buf = addr;
-    _i2c.writeByte(MODULE_4ENCODERMOTOR_ADDR, reg, write_buf);
+    _i2c.writeByte(_addr, reg, write_buf);
 }
 
 /**
@@ -247,7 +247,7 @@ uint8_t M5Module4EncoderMotor::getI2CAddress(void) {
     uint8_t addr;
     addr = MODULE_4ENCODERMOTOR_I2C_ADDRESS_ADDR;
 
-    _i2c.readBytes(MODULE_4ENCODERMOTOR_ADDR, addr, &read_data, 1);
+    _i2c.readBytes(_addr, addr, &read_data, 1);
     return read_data;
 }
 
@@ -256,7 +256,7 @@ float M5Module4EncoderMotor::getMotorCurrent(void) {
     float c;
     uint8_t *p;
 
-    _i2c.readBytes(MODULE_4ENCODERMOTOR_ADDR, MODULE_4ENCODERMOTOR_CURRENT_ADDR,
+    _i2c.readBytes(_addr, MODULE_4ENCODERMOTOR_CURRENT_ADDR,
                    data, 4);
     p = (uint8_t *)&c;
     memcpy(p, data, 4);
@@ -267,19 +267,19 @@ float M5Module4EncoderMotor::getMotorCurrent(void) {
 void M5Module4EncoderMotor::jumpBootloader(void) {
     uint8_t value = 1;
 
-    _i2c.writeBytes(MODULE_4ENCODERMOTOR_ADDR, JUMP_TO_BOOTLOADER_REG,
+    _i2c.writeBytes(_addr, JUMP_TO_BOOTLOADER_REG,
                     (uint8_t *)&value, 1);
 }
 
 uint16_t M5Module4EncoderMotor::getAnalogInput(hbridge_anolog_read_mode_t bit) {
     if (bit == _8bit) {
         uint8_t data;
-        _i2c.readBytes(MODULE_4ENCODERMOTOR_ADDR,
+        _i2c.readBytes(_addr,
                        MODULE_4ENCODERMOTOR_ADC_8BIT_REG, &data, 1);
         return data;
     } else {
         uint8_t data[2];
-        _i2c.readBytes(MODULE_4ENCODERMOTOR_ADDR,
+        _i2c.readBytes(_addr,
                        MODULE_4ENCODERMOTOR_ADC_12BIT_REG, data, 2);
         return (data[0] | (data[1] << 8));
     }

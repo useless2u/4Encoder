@@ -7,11 +7,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/M5Stack/M5Module-4EncoderMotor.git"
-  },
-  "dependencies": {
-    "M5Unified": "*",
-    "M5GFX": "*"
+    "url": "https://github.com/useless2u/4Encoder.git"
   },
   "version": "1.0.0",
   "frameworks": "arduino",
